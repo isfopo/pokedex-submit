@@ -10,6 +10,8 @@ const PokeClient = new Pokedex.Pokedex({
   timeout: 5000
 });
 
+// a small change
+
 class App extends PureComponent {
   state = {
     pokeList: [],
