@@ -2,37 +2,31 @@ import React, { PureComponent } from "react";
 
 import "./styles.scss";
 
-const Pokedex = require("pokeapi-js-wrapper");
-
-const PokeClient = new Pokedex.Pokedex({
-  protocol: "https",
-  cache: true,
-  timeout: 5000
-});
-
-// a small change
 
 class App extends PureComponent {
   state = {
     pokeList: [],
+    limit: 12,
     offset: 0,
     searchString: ""
   };
 
   handleIncreaseOffset = () => {
-    this.setState({ offset: this.state.offset + 12 });
+    this.setState({ offset: this.state.offset + this.state.limit });
   };
 
   handleDecreaseOffset = () => {
-    this.setState({ offset: this.state.offset - 12 });
+    this.setState({ offset: this.state.offset - this.state.limit });
   };
 
   renderPokemon = () => {
-    PokeClient.getPokemonsList({ limit: 12, offset: this.state.offset })
+    fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${this.state.limit}&offset=${this.state.offset}`)
+      .then(response => {
+        return response.json();
+      })
       .then(response => {
         this.setState({ pokeList: response.results });
       })
-      .catch();
   };
 
   getPokeData = name => {
@@ -49,7 +43,10 @@ class App extends PureComponent {
 
     selectedCard.style.display = "block";
 
-    PokeClient.getPokemonByName(name)
+    fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
+      .then(response => {
+        return response.json();
+      })
       .then(function(response) {
         console.log(response);
 
