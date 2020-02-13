@@ -14,6 +14,11 @@ function Searchbar() {
                 const handleSearchSubmit = e => {
                     e.preventDefault();
                     context.actions.getPokeData(context.searchString.toLocaleLowerCase());
+                    e.currentTarget.reset();
+                };
+
+                const handleSearchChange = e => {
+                    context.searchString = e.target.value;
                 };
 
                 return (
@@ -24,6 +29,7 @@ function Searchbar() {
                                     type="text"
                                     value={context.searchString}
                                     ref={input}
+                                    onChange={handleSearchChange}
                                     placeholder="Search Pokemon"
                                 />
                             </label>
