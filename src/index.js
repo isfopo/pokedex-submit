@@ -4,14 +4,11 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 import { App } from './Components/App.js';
-import { Provider } from './Components/Context/index';
 
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-    <Provider>
-        <App />
-    </Provider>, 
+        <App />,
     document.getElementById('root')
 );
 

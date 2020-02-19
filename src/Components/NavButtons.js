@@ -2,31 +2,26 @@ import React from 'react';
 
 import "../styles.scss";
 
-import { Consumer } from './Context'
-
-export const NavButtons = () => {
+export const NavButtons = props => {
     return (
-        <Consumer>
-            { context => {
-                return (
-                    <>
-                        <button
-                            id="previous"
-                            className="btn poke-card"
-                            onClick={context.actions.handleDecreaseOffset}
-                        >
-                            Previous
-                        </button>
-                        <button
-                            id="next"
-                            className="btn poke-card"
-                            onClick={context.actions.handleIncreaseOffset}
-                        >
-                            Next
-                        </button>
-                    </>
-                )
-            }}
-        </Consumer>
+        <>
+            <button
+                id="previous"
+                className="btn poke-card"
+                onClick={props.handleDecreaseOffset}
+            >
+                Previous
+            </button>
+
+            <button
+                id="next"
+                className="btn poke-card"
+                onClick={props.handleIncreaseOffset}
+            >
+                Next
+            </button>
+        </>
     )
 }
+
+export default NavButtons;
