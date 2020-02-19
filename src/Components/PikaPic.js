@@ -2,7 +2,7 @@ import React from 'react';
 
 import "../styles.scss";
 
-export function PikaPic() {
+const PikaPic = () => {
     return (
     <>
         <img
@@ -14,3 +14,5 @@ export function PikaPic() {
     </>
     )
 }
+
+export default PikaPic;

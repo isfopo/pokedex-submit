@@ -2,9 +2,9 @@ import React, { Component } from "react";
 
 import TitleBar from './TitleBar';
 import Searchbar from './Searchbar';
-import { Pokecards } from './Pokecards';
-import { NavButtons } from './NavButtons';
-import { PikaPic } from "./PikaPic";
+import Pokecards from './Pokecards';
+import NavButtons from './NavButtons';
+import PikaPic from "./PikaPic";
 
 
 import "../styles.scss";
@@ -159,12 +159,12 @@ export class App extends Component {
           <TitleBar />
           <Searchbar 
               searchString={this.state.searchString}
-              handleSearchChange={this.state.handleSearchChange}
-              handleSearchSubmit={this.state.handleSearchSubmit}
+              handleSearchChange={this.handleSearchChange}
+              handleSearchSubmit={this.handleSearchSubmit}
           />
         </div>
 
-        <div className="main-content">
+        <div id="main-content">
           <Pokecards 
             pokeList={this.state.pokeList}
             getPokeData={this.getPokeData}
