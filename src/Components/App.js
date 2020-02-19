@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 
 import TitleBar from './TitleBar';
 import Searchbar from './Searchbar';
@@ -9,34 +9,33 @@ import PikaPic from "./PikaPic";
 
 import "../styles.scss";
 
-export class App extends Component {
+export const App = () => {
 
-  state = {
-    pokeList: [],
-    limit: 12,
-    offset: 0,
-    searchString: ""
+  
+  const [pokeList, setPokeList] = useState([]);
+  const [limit] = useState(12);
+  const [offset, setOffset] = useState(0);
+  const [searchString, setSearchString] = useState("");
+
+  const handleIncreaseOffset = () => {
+    setOffset( offset + limit );
   };
 
-  handleIncreaseOffset = () => {
-    this.setState({ offset: this.state.offset + this.state.limit });
+  const handleDecreaseOffset = () => {
+    setOffset( offset - limit );
   };
 
-  handleDecreaseOffset = () => {
-    this.setState({ offset: this.state.offset - this.state.limit });
-  };
-
-  renderPokemon = () => {
-    fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${this.state.limit}&offset=${this.state.offset}`)
+  const renderPokemon = () => {
+    fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`)
       .then(response => {
         return response.json();
       })
       .then(response => {
-        this.setState({ pokeList: response.results });
+        setPokeList(response.results);
       })
   };
 
-  getPokeData = name => {
+  const getPokeData = name => {
     const selectedCard = document.getElementById("selectedCard");
 
     selectedCard.innerHTML = ``;
@@ -116,7 +115,7 @@ export class App extends Component {
       });
   };
 
-  returnToMenu = () => {
+  const returnToMenu = () => {
     [...document.getElementsByClassName("poke-card")].forEach(
       card => (card.style.display = "inline-block")
     );
@@ -127,58 +126,53 @@ export class App extends Component {
 
     document.getElementById("selectedCard").style.display = "none";
 
-    this.renderPokemon();
+    renderPokemon();
   };
 
   // Serach methods
 
-  handleSearchChange = e => {
-    this.setState({ searchString: e.target.value });
+  const handleSearchChange = e => {
+    setSearchString( e.target.value );
   };
 
-  handleSearchSubmit = e => {
-    this.getPokeData(this.state.searchString.toLocaleLowerCase());
+  const handleSearchSubmit = e => {
+    getPokeData(searchString.toLocaleLowerCase());
     e.preventDefault();
   };
 
   // lifycycle methods
 
-  componentDidMount() {
-    this.renderPokemon();
+  useEffect(() => {
+    renderPokemon()
   }
+  )
 
-  componentDidUpdate() {
-    this.renderPokemon();
-  }
+  return (
+    <div className="App">
 
-  render() {
-    return (
-      <div className="App">
-
-        <div className="header">
-          <TitleBar />
-          <Searchbar 
-              searchString={this.state.searchString}
-              handleSearchChange={this.handleSearchChange}
-              handleSearchSubmit={this.handleSearchSubmit}
-          />
-        </div>
-
-        <div id="main-content">
-          <Pokecards 
-            pokeList={this.state.pokeList}
-            getPokeData={this.getPokeData}
-            returnToMenu={this.returnToMenu}
-          />
-
-          <NavButtons 
-            handleDecreaseOffset={this.handleDecreaseOffset}
-            handleIncreaseOffset={this.handleIncreaseOffset}
-          />
-        </div>
-
-        <PikaPic />
+      <div className="header">
+        <TitleBar />
+        <Searchbar 
+            searchString={searchString}
+            handleSearchChange={handleSearchChange}
+            handleSearchSubmit={handleSearchSubmit}
+        />
       </div>
-    )
-  };
+
+      <div id="main-content">
+        <Pokecards 
+          pokeList={pokeList}
+          getPokeData={getPokeData}
+          returnToMenu={returnToMenu}
+        />
+
+        <NavButtons 
+          handleDecreaseOffset={handleDecreaseOffset}
+          handleIncreaseOffset={handleIncreaseOffset}
+        />
+      </div>
+
+      <PikaPic />
+    </div>
+  );
 }
