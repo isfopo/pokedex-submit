@@ -17,14 +17,6 @@ export const App = () => {
   const [offset, setOffset] = useState(0);
   const [searchString, setSearchString] = useState("");
 
-  const handleIncreaseOffset = () => {
-    setOffset( offset + limit );
-  };
-
-  const handleDecreaseOffset = () => {
-    setOffset( offset - limit );
-  };
-
   const renderPokemon = () => {
     fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`)
       .then(response => {
@@ -129,7 +121,13 @@ export const App = () => {
     renderPokemon();
   };
 
-  // Serach methods
+  const handleIncreaseOffset = () => {
+    setOffset( offset + limit );
+  };
+
+  const handleDecreaseOffset = () => {
+    setOffset( offset - limit );
+  };
 
   const handleSearchChange = e => {
     setSearchString( e.target.value );
@@ -140,12 +138,9 @@ export const App = () => {
     e.preventDefault();
   };
 
-  // lifycycle methods
-
   useEffect(() => {
     renderPokemon()
-  }
-  )
+  })
 
   return (
     <div className="App">
