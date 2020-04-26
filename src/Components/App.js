@@ -1,39 +1,32 @@
-import React, { PureComponent } from "react";
+import React, { useState, useEffect } from "react";
 
-import "./styles.scss";
+import TitleBar from './TitleBar';
+import Searchbar from './Searchbar';
+import Pokecards from './Pokecards';
+import NavButtons from './NavButtons';
+import PikaPic from "./PikaPic";
 
-const Pokedex = require("pokeapi-js-wrapper");
 
-const PokeClient = new Pokedex.Pokedex({
-  protocol: "https",
-  cache: true,
-  timeout: 5000
-});
+import "../styles.scss";
 
-class App extends PureComponent {
-  state = {
-    pokeList: [],
-    offset: 0,
-    searchString: ""
-  };
+export const App = () => {
 
-  handleIncreaseOffset = () => {
-    this.setState({ offset: this.state.offset + 12 });
-  };
+  const [pokeList, setPokeList] = useState([]);
+  const [limit] = useState(12);
+  const [offset, setOffset] = useState(0);
+  const [searchString, setSearchString] = useState("");
 
-  handleDecreaseOffset = () => {
-    this.setState({ offset: this.state.offset - 12 });
-  };
-
-  renderPokemon = () => {
-    PokeClient.getPokemonsList({ limit: 12, offset: this.state.offset })
+  const renderPokemon = () => {
+    fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`)
       .then(response => {
-        this.setState({ pokeList: response.results });
+        return response.json();
       })
-      .catch();
+      .then(response => {
+        setPokeList(response.results);
+      })
   };
 
-  getPokeData = name => {
+  const getPokeData = name => {
     const selectedCard = document.getElementById("selectedCard");
 
     selectedCard.innerHTML = ``;
@@ -47,7 +40,10 @@ class App extends PureComponent {
 
     selectedCard.style.display = "block";
 
-    PokeClient.getPokemonByName(name)
+    fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
+      .then(response => {
+        return response.json();
+      })
       .then(function(response) {
         console.log(response);
 
@@ -110,7 +106,7 @@ class App extends PureComponent {
       });
   };
 
-  returnToMenu = () => {
+  const returnToMenu = () => {
     [...document.getElementsByClassName("poke-card")].forEach(
       card => (card.style.display = "inline-block")
     );
@@ -121,94 +117,57 @@ class App extends PureComponent {
 
     document.getElementById("selectedCard").style.display = "none";
 
-    this.renderPokemon();
+    renderPokemon();
   };
 
-  // Serach methods
-
-  handleSearchChange = e => {
-    this.setState({ searchString: e.target.value });
+  const handleIncreaseOffset = () => {
+    setOffset( offset + limit );
   };
 
-  handleSearchSubmit = e => {
-    this.getPokeData(this.state.searchString.toLocaleLowerCase());
+  const handleDecreaseOffset = () => {
+    setOffset( offset - limit );
+  };
+
+  const handleSearchChange = e => {
+    setSearchString( e.target.value );
+  };
+
+  const handleSearchSubmit = e => {
+    getPokeData(searchString.toLocaleLowerCase());
     e.preventDefault();
   };
 
-  // lifycycle methods
+  useEffect(() => {
+    renderPokemon()
+    // eslint-disable-next-line
+  }, [offset] )
 
-  componentDidMount() {
-    this.renderPokemon();
-  }
+  return (
+    <div className="App">
 
-  componentDidUpdate() {
-    this.renderPokemon();
-  }
-
-  render() {
-    return (
-      <div className="App">
-        <div className="header">
-          <img
-            className="header-logo"
-            src="https://raw.githubusercontent.com/CodeLouisville/FSJS-Weekly-Challenges/master/Challenges/Week5/images/pokedex.png"
-            alt="pokedex logo"
-          />
-          <h1>Pok&eacute;dex</h1>
-          <br />
-          <div id="searchbar">
-            <form onSubmit={this.handleSearchSubmit}>
-              <label>
-                <input
-                  type="text"
-                  value={this.state.searchString}
-                  onChange={this.handleSearchChange}
-                  placeholder="Search Pokemon"
-                />
-              </label>
-            </form>
-          </div>
-        </div>
-
-        <div id="main-content">
-          <ul>
-            {this.state.pokeList.map(poke => (
-              <li
-                className="poke-card"
-                key={poke.name}
-                onClick={() => this.getPokeData(poke.name)}
-              >
-                <h3>{poke.name.toUpperCase()}</h3>
-              </li>
-            ))}
-            <li id="selectedCard" onClick={this.returnToMenu} />
-          </ul>
-
-          <button
-            id="previous"
-            className="btn poke-card"
-            onClick={this.handleDecreaseOffset}
-          >
-            Previous
-          </button>
-          <button
-            id="next"
-            className="btn poke-card"
-            onClick={this.handleIncreaseOffset}
-          >
-            Next
-          </button>
-        </div>
-
-        <img
-          id="pikachu"
-          className="hvr-hang"
-          src="https://raw.githubusercontent.com/CodeLouisville/FSJS-Weekly-Challenges/master/Challenges/Week5/images/pikachu.png"
-          alt="Pikachu"
+      <div className="header">
+        <TitleBar />
+        <Searchbar 
+            searchString={searchString}
+            handleSearchChange={handleSearchChange}
+            handleSearchSubmit={handleSearchSubmit}
         />
       </div>
-    );
-  }
-}
 
-export default App;
+      <div id="main-content">
+        <Pokecards 
+          pokeList={pokeList}
+          getPokeData={getPokeData}
+          returnToMenu={returnToMenu}
+        />
+
+        <NavButtons 
+          handleDecreaseOffset={handleDecreaseOffset}
+          handleIncreaseOffset={handleIncreaseOffset}
+        />
+      </div>
+
+      <PikaPic />
+    </div>
+  );
+}
