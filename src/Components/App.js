@@ -11,7 +11,6 @@ import "../styles.scss";
 
 export const App = () => {
 
-  
   const [pokeList, setPokeList] = useState([]);
   const [limit] = useState(12);
   const [offset, setOffset] = useState(0);
@@ -140,7 +139,8 @@ export const App = () => {
 
   useEffect(() => {
     renderPokemon()
-  })
+    // eslint-disable-next-line
+  }, [offset] )
 
   return (
     <div className="App">

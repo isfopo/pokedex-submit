@@ -19,6 +19,7 @@ const Pokecards = props => {
                         )
                     )
                 }
+                
                 <li id="selectedCard" onClick={props.returnToMenu} />
         </ul>
     );
